@@ -13,9 +13,12 @@ public class Car : MonoBehaviour
     [SerializeField] Vector3 CollisionDir;
     [SerializeField] Collider BoxTrigger;
     [SerializeField] bool Interactable = false;
+    [SerializeField] Transform CarBody;
     //[SerializeField] float ImpactForce;
     bool CanFollow = true;
     bool Collided = false;
+    bool IsDestinationReached = false;
+    bool Following = false;
     public delegate void OnDestinationReached(Car car);
     public delegate void CarCollision();
     public delegate void DeliverCarInfo(Car car);
@@ -52,6 +55,7 @@ public class Car : MonoBehaviour
     public void ActivateCar(bool activestatus)
     {
         if (!CanFollow) return;
+        Following = true;
         m_splineFollower.followSpeed = FollowSpeed;
         m_splineFollower.follow = activestatus;
         IsActive = true;
@@ -59,16 +63,28 @@ public class Car : MonoBehaviour
     }
     public void DestinationReached()
     {
-        //Debug.Log("Pahuchhg gyaaa ");
-        CanFollow = false;
+        Debug.Log("Pahuchhg gyaaa ");
+        IsDestinationReached = true;
+        //CanFollow = false;
+        
         onDestinationReached?.Invoke(this);
+        Following=false;
     }
     private void OnMouseUp()
     {
-        if (m_splineFollower == null) return;
+        if (m_splineFollower == null || Following) return;
+        if (IsDestinationReached)
+        {
+            RotateCar();
+        }
         ActivateCar(true);
     }
-   
+    void RotateCar()
+    {
+        
+        m_splineFollower.direction = Spline.Direction.Backward;
+        CarBody.localEulerAngles += new Vector3(0, 180, 0);
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (Collided || other.transform.tag != "Car") return;
