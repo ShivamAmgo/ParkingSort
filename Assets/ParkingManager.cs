@@ -9,9 +9,23 @@ public class ParkingManager : MonoBehaviour
     int CarsReachedCount = 0;
     public delegate void RoundWin(bool WinStatus);
     public static event RoundWin SetWin;
+    public static ParkingManager Instance { get; private set; }
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            Instance = this;
+        }
+
+        //Application.targetFrameRate = 60;
+    }
     private void OnEnable()
     {
-        Car.onDestinationReached += ReachedCar;
+        //Car.onDestinationReached += ReachedCar;
         Car.InfoDeliver += RecieveCarInfo;
     }
 
@@ -19,11 +33,11 @@ public class ParkingManager : MonoBehaviour
 
     private void OnDisable()
     {
-        Car.onDestinationReached -= ReachedCar; 
+        //Car.onDestinationReached -= ReachedCar; 
         Car.InfoDeliver -= RecieveCarInfo;  
     }
 
-    private void ReachedCar(Car car)
+    public void ReachedCar(Car car)
     {
         CarsReachedCount++;
         //Debug.Log("Cars Reached " + CarsReachedCount +" Out of "+CarsCount);
@@ -32,6 +46,12 @@ public class ParkingManager : MonoBehaviour
             SetWin?.Invoke(true);
             Debug.Log("Won");
         }
+        
+    }
+    public void CarLeaved(Car car)
+    {
+        CarsReachedCount--;
+        //Debug.Log("Cars Reached " + CarsReachedCount + " Out of " + CarsCount);
     }
     private void RecieveCarInfo(Car car)
     {

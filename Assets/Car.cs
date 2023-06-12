@@ -11,9 +11,10 @@ public class Car : MonoBehaviour
     [SerializeField]SplineFollower m_splineFollower;
     [SerializeField] float FollowSpeed = 1;
     [SerializeField] Vector3 CollisionDir;
-    [SerializeField] Collider BoxTrigger;
+    
     [SerializeField] bool Interactable = false;
     [SerializeField] Transform CarBody;
+    [SerializeField] GameObject CollisionFX;
     //[SerializeField] float ImpactForce;
     bool CanFollow = true;
     bool Collided = false;
@@ -30,10 +31,34 @@ public class Car : MonoBehaviour
     private void OnEnable()
     {
         Car.OnCarCollision += AfterCollision;
+        ParkingManager.SetWin += CheckWin;
     }
+
     private void OnDisable()
     {
-        Car.OnCarCollision -= AfterCollision;  
+        Car.OnCarCollision -= AfterCollision;
+        ParkingManager.SetWin -= CheckWin;
+    }
+    private void Start()
+    {
+        RB = GetComponent<Rigidbody>();
+        RB.isKinematic = true;
+        if (!Interactable) return;
+        m_splineFollower = GetComponent<SplineFollower>();
+            InfoDeliver?.Invoke(this);
+        if (m_splineFollower == null) return;
+        m_splineFollower.follow = false;
+        m_splineFollower.onBeginningReached+=DestinationReached;
+        m_splineFollower.onEndReached+=DestinationReached;
+    }
+    private void CheckWin(bool WinStatus)
+    {
+        if (WinStatus) 
+        {
+            CanFollow = false;
+            m_splineFollower.follow = false;
+        }
+        Debug.Log("Won " + WinStatus);
     }
 
     private void AfterCollision()
@@ -46,12 +71,7 @@ public class Car : MonoBehaviour
         RB.isKinematic = false;
     }
 
-    private void Start()
-    {
-        RB = GetComponent<Rigidbody>();
-        if(Interactable)
-        InfoDeliver?.Invoke(this);
-    }
+  
     public void ActivateCar(bool activestatus)
     {
         if (!CanFollow) return;
@@ -61,7 +81,7 @@ public class Car : MonoBehaviour
         IsActive = true;
         
     }
-    public void DestinationReached()
+    public void DestinationReached(double d)
     {
         Debug.Log("Pahuchhg gyaaa ");
         IsDestinationReached = true;
@@ -72,39 +92,57 @@ public class Car : MonoBehaviour
     }
     private void OnMouseUp()
     {
-        if (m_splineFollower == null || Following) return;
+        if (m_splineFollower == null || Following || !Interactable) return;
         if (IsDestinationReached)
         {
             RotateCar();
+            return;
         }
         ActivateCar(true);
     }
     void RotateCar()
     {
-        
-        m_splineFollower.direction = Spline.Direction.Backward;
+        if(m_splineFollower.direction==Spline.Direction.Forward)
+            m_splineFollower.direction = Spline.Direction.Backward;
+        else
+            m_splineFollower.direction=Spline.Direction.Forward;
+
+
         CarBody.localEulerAngles += new Vector3(0, 180, 0);
+        ActivateCar(true);
     }
     private void OnTriggerEnter(Collider other)
     {
         if (Collided || other.transform.tag != "Car") return;
 
-        Collided = true;
+        
+        other.GetComponentInParent<Car>().CollisionEffect();
         CollisionEffect();
+        Debug.Log(transform.name+ " collides " +other.name);
+        
         
     }
-    void CollisionEffect()
+    public void CollisionEffect()
     {
-        //BoxTrigger.enabled = false;
+        if (Collided) return;
+        Collided = true;
         RB.isKinematic = false;
         if (IsActive)
         {
-           
+            
             RB.AddForce(CollisionDir.z * transform.forward, ForceMode.Impulse);
+            //Debug.Log(transform.name + " forced");
         }
-        
+        //Debug.Log(transform.name + " Collided");
+        PlayCollideFX(CollisionFX);
         OnCarCollision?.Invoke();
+        
     }
-
+    void PlayCollideFX(GameObject FX)
+    {
+        if (FX == null) return;
+        FX.SetActive(false);
+        FX.SetActive(true);
+    }
 
 }
