@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Car
   - Parking
+  - Barrier
   layers:
   - Default
   - TransparentFX

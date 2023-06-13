@@ -214,8 +214,8 @@ MonoBehaviour:
   - {fileID: 1170052433}
   - {fileID: 930612337}
   FinalPos: {x: 1.16, y: 3.7, z: 6.82}
-  JumpPower: 1.5
-  Duration: 1
+  JumpPower: 1.75
+  Duration: 0.5
   NumJumps: 1
 --- !u!1 &339718497
 GameObject:
@@ -247,7 +247,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1
+  m_Intensity: 1.84
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -768,8 +768,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 745324780}
-  m_LocalRotation: {x: 0.018060299, y: -0.7125562, z: 0.01843545, w: 0.7011402}
-  m_LocalPosition: {x: 20.027168, y: 6.8069434, z: 5.562215}
+  m_LocalRotation: {x: -0.08175406, y: 0.6611685, z: -0.07298036, w: -0.74219024}
+  m_LocalPosition: {x: 19.485533, y: 6.2841024, z: 1.9140742}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

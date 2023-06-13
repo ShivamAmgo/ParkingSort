@@ -7,7 +7,7 @@ using static ToonyColorsPro.ShaderGenerator.Enums;
 
 public class Car : MonoBehaviour
 {
-    [SerializeField]SplineComputer splineAi;
+    //[SerializeField]SplineComputer splineAi;
     [SerializeField]SplineFollower m_splineFollower;
     [SerializeField] float FollowSpeed = 1;
     [SerializeField] Vector3 CollisionDir;
@@ -113,12 +113,20 @@ public class Car : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        if (Collided || other.transform.tag != "Car") return;
+        if (Collided) return;
 
+        if (other.tag == "Car")
+        {
+            other.GetComponentInParent<Car>().CollisionEffect();
+            
+        }
         
-        other.GetComponentInParent<Car>().CollisionEffect();
-        CollisionEffect();
-        Debug.Log(transform.name+ " collides " +other.name);
+        if (other.tag == "Car" || other.tag == "Barrier")
+        {
+            CollisionEffect();
+        }
+        
+        //Debug.Log(transform.name+ " collides " +other.name);
         
         
     }

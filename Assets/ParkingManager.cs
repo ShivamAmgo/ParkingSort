@@ -1,10 +1,13 @@
+using DG.Tweening;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class ParkingManager : MonoBehaviour
 {
+    [SerializeField] int StartSceneIndex = 0;
     int CarsCount = 0;
     int CarsReachedCount = 0;
     public delegate void RoundWin(bool WinStatus);
@@ -56,5 +59,31 @@ public class ParkingManager : MonoBehaviour
     private void RecieveCarInfo(Car car)
     {
         CarsCount++;
+    }
+    public void Restart()
+    {
+        DOTween.KillAll();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void NextLevel()
+    {
+        /*
+        if(GAScript.Instance)
+            GAScript.Instance.LevelCompleted(SceneManager.GetActiveScene().name);
+            */
+
+        int index = SceneManager.GetActiveScene().buildIndex;
+        index++;
+
+        if (index <= SceneManager.sceneCountInBuildSettings - 1)
+        {
+
+            SceneManager.LoadScene(index);
+        }
+        else
+        {
+            SceneManager.LoadScene(StartSceneIndex);
+        }
     }
 }
