@@ -15,6 +15,7 @@ public class Car : MonoBehaviour
     [SerializeField] bool Interactable = false;
     [SerializeField] Transform CarBody;
     [SerializeField] GameObject CollisionFX;
+    
     //[SerializeField] float ImpactForce;
     bool CanFollow = true;
     bool Collided = false;
@@ -43,8 +44,20 @@ public class Car : MonoBehaviour
     {
         RB = GetComponent<Rigidbody>();
         RB.isKinematic = true;
-        if (!Interactable) return;
         m_splineFollower = GetComponent<SplineFollower>();
+        SplineComputer SC = m_splineFollower.spline;
+        if (!Interactable) 
+        {
+            //SplineMesh sm = GetComponent<SplineMesh>();
+            //sm.enabled = false;
+            SC.transform.GetComponent<MeshRenderer>().enabled = false;
+            SC.transform.GetComponent<SplineMesh>().enabled = false;
+            return;
+        }
+        
+       
+        SC.transform.GetComponent<MeshRenderer>().enabled = true;
+        SC.transform.GetComponent<SplineMesh>().enabled = false;
             InfoDeliver?.Invoke(this);
         if (m_splineFollower == null) return;
         m_splineFollower.follow = false;
@@ -53,6 +66,7 @@ public class Car : MonoBehaviour
     }
     private void CheckWin(bool WinStatus)
     {
+        if (!Interactable) return;
         if (WinStatus) 
         {
             CanFollow = false;
@@ -83,7 +97,7 @@ public class Car : MonoBehaviour
     }
     public void DestinationReached(double d)
     {
-        //Debug.Log("Pahuchhg gyaaa ");
+        Debug.Log("Pahuchhg gyaaa ");
         IsDestinationReached = true;
         //CanFollow = false;
         
