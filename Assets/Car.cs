@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static ToonyColorsPro.ShaderGenerator.Enums;
+
 
 public class Car : MonoBehaviour
 {
@@ -83,7 +83,7 @@ public class Car : MonoBehaviour
     }
     public void DestinationReached(double d)
     {
-        Debug.Log("Pahuchhg gyaaa ");
+        //Debug.Log("Pahuchhg gyaaa ");
         IsDestinationReached = true;
         //CanFollow = false;
         

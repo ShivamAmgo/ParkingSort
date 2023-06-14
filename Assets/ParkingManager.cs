@@ -8,10 +8,13 @@ using UnityEngine.SceneManagement;
 public class ParkingManager : MonoBehaviour
 {
     [SerializeField] int StartSceneIndex = 0;
+    [SerializeField]GameObject[] Win_FailPanel;
+    [SerializeField] float WinLOsePanelDelay = 1.5f;
     int CarsCount = 0;
     int CarsReachedCount = 0;
     public delegate void RoundWin(bool WinStatus);
     public static event RoundWin SetWin;
+    bool CollisionStatus = false;
     public static ParkingManager Instance { get; private set; }
     private void Awake()
     {
@@ -30,31 +33,46 @@ public class ParkingManager : MonoBehaviour
     {
         //Car.onDestinationReached += ReachedCar;
         Car.InfoDeliver += RecieveCarInfo;
+        Car.OnCarCollision += AfterCarCollision;
     }
 
-    
+  
 
     private void OnDisable()
     {
         //Car.onDestinationReached -= ReachedCar; 
         Car.InfoDeliver -= RecieveCarInfo;  
+        Car.OnCarCollision -= AfterCarCollision;
     }
 
     public void ReachedCar(Car car)
     {
         CarsReachedCount++;
-        //Debug.Log("Cars Reached " + CarsReachedCount +" Out of "+CarsCount);
+        Debug.Log("Cars Reached " + CarsReachedCount +" Out of "+CarsCount);
         if (CarsReachedCount >= CarsCount)
         {
             SetWin?.Invoke(true);
             Debug.Log("Won");
+            DOVirtual.DelayedCall(WinLOsePanelDelay, () =>
+            {
+                Win_FailPanel[0].SetActive(true);
+            });
         }
         
+    }
+    private void AfterCarCollision()
+    {
+        if (!CollisionStatus) { return; }
+        CollisionStatus = true;
+        DOVirtual.DelayedCall(WinLOsePanelDelay, () =>
+        {
+            Win_FailPanel[1].SetActive(true);
+        });
     }
     public void CarLeaved(Car car)
     {
         CarsReachedCount--;
-        //Debug.Log("Cars Reached " + CarsReachedCount + " Out of " + CarsCount);
+        Debug.Log("Cars Reached " + CarsReachedCount + " Out of " + CarsCount);
     }
     private void RecieveCarInfo(Car car)
     {
