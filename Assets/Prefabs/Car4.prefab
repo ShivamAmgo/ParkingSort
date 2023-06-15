@@ -185,7 +185,7 @@ MonoBehaviour:
   CollisionDir: {x: 0, y: 0, z: 12}
   Interactable: 1
   CarBody: {fileID: 3058015939045268108}
-  CollisionFX: {fileID: 0}
+  CollisionFX: {fileID: 1977652479}
 --- !u!114 &5728175384050878567
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -303,7 +303,7 @@ MonoBehaviour:
   startSampleIndex: 0
   multithreaded: 0
   buildOnAwake: 0
-  buildOnEnable: 0
+  buildOnEnable: 1
   _isUpdated: 1
   applyDirectionRotation: 1
   useTriggers: 0
@@ -22533,7 +22533,7 @@ PrefabInstance:
     - target: {fileID: 1588505257520937253, guid: 68b6bdcdd9df37f48821744bad6b5ff9,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.8
       objectReference: {fileID: 0}
     - target: {fileID: 1588505257520937253, guid: 68b6bdcdd9df37f48821744bad6b5ff9,
         type: 3}
@@ -22818,6 +22818,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d16221e794fe16e4e8994a7f8c770561, type: 3}
+--- !u!1 &1977652479 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 130848, guid: d16221e794fe16e4e8994a7f8c770561,
+    type: 3}
+  m_PrefabInstance: {fileID: 1977707487}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1978011817 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 490358, guid: d16221e794fe16e4e8994a7f8c770561,

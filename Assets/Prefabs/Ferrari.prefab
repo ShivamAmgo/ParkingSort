@@ -573,7 +573,7 @@ MonoBehaviour:
   startSampleIndex: 0
   multithreaded: 0
   buildOnAwake: 0
-  buildOnEnable: 0
+  buildOnEnable: 1
   _isUpdated: 1
   applyDirectionRotation: 1
   useTriggers: 0

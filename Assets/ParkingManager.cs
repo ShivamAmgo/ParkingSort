@@ -53,6 +53,7 @@ public class ParkingManager : MonoBehaviour
         {
             SetWin?.Invoke(true);
             Debug.Log("Won");
+            car.LastCarBrakeAnimation();
             DOVirtual.DelayedCall(WinLOsePanelDelay, () =>
             {
                 Win_FailPanel[0].SetActive(true);
@@ -62,7 +63,7 @@ public class ParkingManager : MonoBehaviour
     }
     private void AfterCarCollision()
     {
-        if (!CollisionStatus) { return; }
+        if (CollisionStatus) { return; }
         CollisionStatus = true;
         DOVirtual.DelayedCall(WinLOsePanelDelay, () =>
         {

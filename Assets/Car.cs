@@ -1,3 +1,4 @@
+using DG.Tweening;
 using Dreamteck.Splines;
 using System;
 using System.Collections;
@@ -15,7 +16,9 @@ public class Car : MonoBehaviour
     [SerializeField] bool Interactable = false;
     [SerializeField] Transform CarBody;
     [SerializeField] GameObject CollisionFX;
-    
+    //[SerializeField] Transform CarBodyChild;
+    [SerializeField] float BrakeTilt = 5;
+    [SerializeField] float BrakeAnimationDuration = 0.25f;
     //[SerializeField] float ImpactForce;
     bool CanFollow = true;
     bool Collided = false;
@@ -101,8 +104,17 @@ public class Car : MonoBehaviour
         IsDestinationReached = true;
         //CanFollow = false;
         
+        
+        if (m_splineFollower.direction == Spline.Direction.Backward)
+        {
+            PlayBrakeAnimation(-BrakeTilt);
+        }
+        else
+        {
+            PlayBrakeAnimation(BrakeTilt);
+        }
         onDestinationReached?.Invoke(this);
-        Following=false;
+        Following = false;
     }
     private void OnMouseUp()
     {
@@ -124,6 +136,19 @@ public class Car : MonoBehaviour
 
         CarBody.localEulerAngles += new Vector3(0, 180, 0);
         ActivateCar(true);
+    }
+    public void PlayBrakeAnimation(float Rot_x)
+    {
+        Vector3 carbodyangles = CarBody.localEulerAngles;
+        DOTween.To(() => carbodyangles, value => carbodyangles = value, carbodyangles+new Vector3(Rot_x,0,0), BrakeAnimationDuration).SetEase(Ease.Linear).SetLoops(2,LoopType.Yoyo).OnUpdate
+            (() => 
+            {
+                CarBody.localEulerAngles= carbodyangles;
+            });
+    }
+    public void LastCarBrakeAnimation()
+    {
+        PlayBrakeAnimation(BrakeTilt);
     }
     private void OnTriggerEnter(Collider other)
     {

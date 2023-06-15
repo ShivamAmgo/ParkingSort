@@ -153,7 +153,7 @@ MonoBehaviour:
   startSampleIndex: 0
   multithreaded: 0
   buildOnAwake: 0
-  buildOnEnable: 0
+  buildOnEnable: 1
   _isUpdated: 1
   applyDirectionRotation: 1
   useTriggers: 0
@@ -236,6 +236,9 @@ MonoBehaviour:
   Interactable: 1
   CarBody: {fileID: 5009778897823686222}
   CollisionFX: {fileID: 5009778897453986838}
+  CarBodyChild: {fileID: 5009778897823686222}
+  BrakeTilt: 5
+  BrakeAnimationDuration: 0.25
 --- !u!54 &205907679501251808
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -54,7 +54,7 @@ MonoBehaviour:
   isNewlyCreated: 0
   editorUpdateMode: 0
   multithreaded: 0
-  rebuildOnAwake: 0
+  rebuildOnAwake: 1
   updateMode: 0
   triggerGroups: []
   spline:
