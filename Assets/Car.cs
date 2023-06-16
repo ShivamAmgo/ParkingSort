@@ -19,11 +19,14 @@ public class Car : MonoBehaviour
     //[SerializeField] Transform CarBodyChild;
     [SerializeField] float BrakeTilt = 5;
     [SerializeField] float BrakeAnimationDuration = 0.25f;
+     AudioSource audioSource;
     //[SerializeField] float ImpactForce;
     bool CanFollow = true;
     bool Collided = false;
     bool IsDestinationReached = false;
     bool Following = false;
+    AudioClip BrakesSound;
+    AudioClip CarRevSound;
     public delegate void OnDestinationReached(Car car);
     public delegate void CarCollision();
     public delegate void DeliverCarInfo(Car car);
@@ -36,17 +39,27 @@ public class Car : MonoBehaviour
     {
         Car.OnCarCollision += AfterCollision;
         ParkingManager.SetWin += CheckWin;
+        ParkingManager.SendAllSounds += OnSendAllSounds;
     }
 
     private void OnDisable()
     {
         Car.OnCarCollision -= AfterCollision;
         ParkingManager.SetWin -= CheckWin;
+        ParkingManager.SendAllSounds -= OnSendAllSounds;
     }
+
+    private void OnSendAllSounds(List<AudioClip> allSounds)
+    {
+        BrakesSound = allSounds[1];
+        CarRevSound = allSounds[0];
+    }
+
     private void Start()
     {
         RB = GetComponent<Rigidbody>();
         RB.isKinematic = true;
+        audioSource = GetComponentInParent<AudioSource>();
         m_splineFollower = GetComponent<SplineFollower>();
         SplineComputer SC = m_splineFollower.spline;
         if (!Interactable) 
@@ -80,6 +93,7 @@ public class Car : MonoBehaviour
 
     private void AfterCollision()
     {
+        audioSource.Stop();
         CanFollow = false;
         if(m_splineFollower!=null)
         m_splineFollower.follow = false;
@@ -96,6 +110,7 @@ public class Car : MonoBehaviour
         m_splineFollower.followSpeed = FollowSpeed;
         m_splineFollower.follow = activestatus;
         IsActive = true;
+        PlayAudioFX(CarRevSound, true);
         
     }
     public void DestinationReached(double d)
@@ -140,6 +155,7 @@ public class Car : MonoBehaviour
     public void PlayBrakeAnimation(float Rot_x)
     {
         Vector3 carbodyangles = CarBody.localEulerAngles;
+        PlayAudioFX(BrakesSound, false);
         DOTween.To(() => carbodyangles, value => carbodyangles = value, carbodyangles+new Vector3(Rot_x,0,0), BrakeAnimationDuration).SetEase(Ease.Linear).SetLoops(2,LoopType.Yoyo).OnUpdate
             (() => 
             {
@@ -172,6 +188,7 @@ public class Car : MonoBehaviour
     public void CollisionEffect()
     {
         if (Collided) return;
+        audioSource.Stop();
         Collided = true;
         RB.isKinematic = false;
         if (IsActive)
@@ -190,6 +207,13 @@ public class Car : MonoBehaviour
         if (FX == null) return;
         FX.SetActive(false);
         FX.SetActive(true);
+    }
+    void PlayAudioFX(AudioClip clip, bool IsLooping)
+    {
+        audioSource.Stop();
+        audioSource.clip = clip;
+        audioSource.loop = IsLooping;
+        audioSource.Play();
     }
 
 }

@@ -11,18 +11,26 @@ public class Barrier : MonoBehaviour
 
     [SerializeField] Transform Target;
     [SerializeField] Vector3 TargetRotation;
+    [SerializeField] Vector3 TargetPosition;
     [SerializeField] float BarrierCloseDuration = 2;
     [SerializeField] float ClosingSpeedinTime = 1;
+    [SerializeField] bool IsBarrierPost = false;
     Vector3 startingRot;
+    Vector3 StartingPos;
     float TweenZ = 0;
     Tween ActiveTween;
     bool IsActive = true;
     
+    
     private void Start()
     {
         startingRot = Target.eulerAngles;
+        StartingPos = Target.position;
         TweenZ = startingRot.z;
-        StartCoroutine(PlayBarrierAnimation());
+        if(!IsBarrierPost)
+            StartCoroutine(PlayBarrierAnimation());
+        else
+            StartCoroutine(PlayPostBarrierAnimation());
     }
     IEnumerator PlayBarrierAnimation()
     {
@@ -48,6 +56,25 @@ public class Barrier : MonoBehaviour
         });
         
     }
+    IEnumerator PlayPostBarrierAnimation()
+    {
+        
+        yield return new WaitForSeconds(BarrierCloseDuration);
+        ActiveTween= Target.DOMoveY(TargetPosition.y, ClosingSpeedinTime).SetEase(Ease.Linear).OnStart(() =>
+        {
+            if (!IsActive)
+            {
+                ActiveTween.Kill();
+            }
+        });
+        yield return new WaitForSeconds(BarrierCloseDuration+ClosingSpeedinTime);
+        ActiveTween= Target.DOMoveY(StartingPos.y, ClosingSpeedinTime).SetEase(Ease.Linear).OnComplete(() => 
+        {
+            if (!IsActive) return;
+            StartCoroutine(PlayPostBarrierAnimation());
+        });
+
+    }
     private void OnTriggerEnter(Collider other)
     {
         
@@ -57,11 +84,12 @@ public class Barrier : MonoBehaviour
         {
             IsActive = false;
             Debug.Log("Car takrayi");
+            if(!IsBarrierPost)
             StopCoroutine(PlayBarrierAnimation());
+            else
+                StopCoroutine(PlayPostBarrierAnimation());
             DOTween.Kill(ActiveTween);
             
-            
-
         }
     }
 }
