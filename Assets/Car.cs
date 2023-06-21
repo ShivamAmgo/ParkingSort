@@ -28,7 +28,9 @@ public class Car : MonoBehaviour
     bool CanFollow = true;
     bool Collided = false;
     bool IsDestinationReached = false;
+    bool IsBeginningReached = false;
     bool Following = false;
+    Vector3 StartingRot;
     AudioClip BrakesSound;
     AudioClip CarRevSound;
 
@@ -66,6 +68,7 @@ public class Car : MonoBehaviour
 
     private void Start()
     {
+
         RB = GetComponent<Rigidbody>();
         RB.isKinematic = true;
         audioSource = GetComponentInParent<AudioSource>();
@@ -86,8 +89,9 @@ public class Car : MonoBehaviour
         InfoDeliver?.Invoke(this);
         if (m_splineFollower == null) return;
         m_splineFollower.follow = false;
-        m_splineFollower.onBeginningReached += DestinationReached;
+        m_splineFollower.onBeginningReached += OnBeginningReached;
         m_splineFollower.onEndReached += DestinationReached;
+        StartingRot = CarBody.localEulerAngles;
     }
 
     private void CheckWin(bool WinStatus)
@@ -123,16 +127,34 @@ public class Car : MonoBehaviour
         IsActive = true;
         PlayAudioFX(CarRevSound, true);
         Vibration.Vibrate(30);
-        Debug.Log("TapOncar");
+        //Debug.Log("TapOncar");
     }
 
     public void DestinationReached(double d)
     {
-        Debug.Log("Pahuchhg gyaaa ");
+        Debug.Log("Pahuchhg gyaaa  "+transform.root.name );
+        IsBeginningReached = false;
         IsDestinationReached = true;
         //CanFollow = false;
+        PlayBrakes();
 
+        
 
+        //onDestinationReached?.Invoke(this);
+        Following = false;
+        Vibration.Vibrate(30);
+
+    }
+    public void OnBeginningReached(double d)
+    {
+        Debug.Log("beginning gyaaa  " + transform.root.name);
+        IsDestinationReached = false;
+        IsBeginningReached = true;
+        PlayBrakes();
+        Following = false; Vibration.Vibrate(30);
+    }
+    void PlayBrakes()
+    {
         if (m_splineFollower.direction == Spline.Direction.Backward)
         {
             PlayBrakeAnimation(-BrakeTilt);
@@ -141,34 +163,35 @@ public class Car : MonoBehaviour
         {
             PlayBrakeAnimation(BrakeTilt);
         }
-
-        onDestinationReached?.Invoke(this);
-        Following = false;
-        Vibration.Vibrate(30);
-
     }
-
     private void OnMouseUp()
     {
         if (m_splineFollower == null || Following || !Interactable) return;
+        Following = true;
         if (IsDestinationReached)
         {
-            RotateCar();
+            RotateCar(CarBody.localEulerAngles + new Vector3(0, 180, 0));
+            return;
+        }
+        else if (IsBeginningReached)
+        {
+            RotateCar(StartingRot);
             return;
         }
 
         ActivateCar(true);
     }
 
-    void RotateCar()
+    void RotateCar(Vector3 ROT)
     {
+        Debug.Log("ROtated");
         if (m_splineFollower.direction == Spline.Direction.Forward)
             m_splineFollower.direction = Spline.Direction.Backward;
         else
             m_splineFollower.direction = Spline.Direction.Forward;
 
 
-        CarBody.localEulerAngles += new Vector3(0, 180, 0);
+        CarBody.localRotation = Quaternion.Euler(ROT);
         ActivateCar(true);
     }
 
