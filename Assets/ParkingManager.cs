@@ -74,7 +74,7 @@ public class ParkingManager : MonoBehaviour
     public void ReachedCar(Car car)
     {
         CarsReachedCount++;
-        Debug.Log("Cars Reached " + CarsReachedCount + " Out of " + CarsCount);
+       // Debug.Log("Cars Reached " + CarsReachedCount + " Out of " + CarsCount);
         if (CarsReachedCount >= CarsCount)
         {
             SetWin?.Invoke(true);
@@ -108,7 +108,7 @@ public class ParkingManager : MonoBehaviour
     public void CarLeaved(Car car)
     {
         CarsReachedCount--;
-        Debug.Log("Cars Reached " + CarsReachedCount + " Out of " + CarsCount);
+       // Debug.Log("Cars Reached " + CarsReachedCount + " Out of " + CarsCount);
     }
 
     private void RecieveCarInfo(Car car)

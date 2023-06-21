@@ -825,7 +825,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fc60b35ed5703646a335f1789489602, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartSceneIndex: 0
+  StartSceneIndex: 1
   Win_FailPanel:
   - {fileID: 4298666466368034006}
   - {fileID: 851144238146478852}
